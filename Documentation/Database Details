@@ -1,0 +1,174 @@
+
+1.create table
+
+mysql> 
+create table userAuthentication(id int AUTO_INCREMENT primary key,userName varchar(20) NOT NULL UNIQUE,password varchar(20) NOT NULL,accountStatus boolean,numberOfAttempts int,firstName varchar(20) NOT NULL,lastName varchar(20) NOT NULL,mobileNumber NOT NULL,emailId varchar(40) NOT NULL,lastLoggedIn TIMESTAMP,gender varchar(20) NOT NULL,birthDate DATE NOT NULL,CHECK(numberOfAttempts<=3));
+
+
+2.Description of table:
+
+mysql> describe userAuthentication;
++------------------+---------------+------+-----+---------+----------------+
+| Field            | Type          | Null | Key | Default | Extra          |
++------------------+---------------+------+-----+---------+----------------+
+| id               | int(11)       | NO   | PRI | NULL    | auto_increment |
+| userName         | varchar(20)   | NO   | UNI | NULL    |                |
+| password         | varchar(20)   | NO   |     | NULL    |                |
+| accountStatus    | tinyint(1)    | YES  |     | NULL    |                |
+| numberOfAttempts | int(11)       | YES  |     | NULL    |                |
+| firstName        | varchar(20)   | NO   |     | NULL    |                |
+| lastName         | varchar(20)   | NO   |     | NULL    |                |
+| mobileNumber     | decimal(10,0) | NO   |     | NULL    |                |
+| emailId          | varchar(40)   | NO   |     | NULL    |                |
+| lastLoggedIn     | timestamp     | YES  |     | NULL    |                |
+| gender           | varchar(20)   | NO   |     | NULL    |                |
+| birthDate        | date          | NO   |     | NULL    |                |
++------------------+---------------+------+-----+---------+----------------+
+
+
+3.Demo data in table:
+
+mysql> insert into userAuthentication(userName,password,accountStatus,numberOfAttempts,firstName,lastName,mobileNumber,emailId,lastLoggedIn)
+ values('anny09','Aniket@12',1,3,'Aniket','Tikone',8668695116,'Aniket.tikone@gmail.com',NOW(),'M','1912-09-09');
+
+
+insert into userAuthentication(userName,password,accountStatus,numberOfAttempts,firstName,lastName,mobileNumber,emailId,lastLoggedIn,gender,birthDate) values('sagar09','sp@12',1,3,'Sagar','P',785457810,'sagar@gmail.com',NOW(),'M','1998-09-12');
+
+
+mysql> select * from userAuthentication;
++----+----------+-----------+---------------+------------------+-----------+----------+--------------+------------------+---------------------+--------+------------+
+| id | userName | password  | accountStatus | numberOfAttempts | firstName | lastName | mobileNumber | emailId          | lastLoggedIn        | gender | birthDate  |
++----+----------+-----------+---------------+------------------+-----------+----------+--------------+------------------+---------------------+--------+------------+
+|  1 | anny09   | Aniket@12 |             1 |                3 | Aniket    | Tikone   |   8545457810 | Aniket@gmail.com | 2020-05-07 12:15:25 | M      | 1998-09-12 |
+|  2 | sagar09  | sp@12     |             1 |                3 | Sagar     | P        |    785457810 | sagar@gmail.com  | 2020-05-07 12:27:38 | M      | 1998-09-12 |
++----+----------+-----------+---------------+------------------+-----------+----------+--------------+------------------+---------------------+--------+------------+
+2 rows in set (0.00 sec)
+
+
+
+NOTE: accountStatus = 1(Active Account) ,accountStatus = 0 (Deactivated Account)
+
+
+//Some changes while implementing FB and google through login
+
+1.modified username attribute to not null to can be Null:
+command: Alter table userAuthentication modify column userName varchar(20) UNIQUE;
+
+2.changed mob number from Not null and unique to can be null
+command: Alter table userAuthentication modify column mobileNumber NUMERIC;
+
+//Adding UserId,LoginType,ImageUrl,accessToken 
+
+3.adding column loginType 
+command:alter table userAuthentication add column loginType int CHECK(loginType<=3);
+	note:
+		loginType 1 =system login
+		loginType 2 =facebook login
+		loginType 3 =google login
+
+4.adding column userId
+command:alter table userAuthentication add column userId NUMERIC(65) unique;
+
+5.imageUrl:
+command:alter table userAuthentication add column imageUrl varchar(100);
+
+6.Access Token
+command: alter table userAuthentication add column accessToken varchar(300);
+
+7.password can be null due to login using fb and google
+command: Alter table userAuthentication modify column password varchar(100);
+==========================================================================================
+--new changes ,7-8-2020 for feature
+we need following changes
+. User profile information should have more information emergency contact email id
+. We should create one API "emergencyCall" which will be called by mobile application
+. API will send email to emergency email id and cc to user email id.
+
+8.adding emergencyMobileNumber column 
+command:alter table userAuthentication add column emergencyMobileNumber NUMERIC;
+
+
+9.adding emergencyEmailId column
+command:alter table userAuthentication add column emergencyEmailId varchar(40);
+
+10.changed mobileNumber from unique to not unique
+command:Alter table userAuthentication drop index mobileNumber;
+
+
+
+
+=====================================================NEW LAPTOP BACKUP DATABASE OF userAuthentication============================
+
+
+Database changed
+mysql> show tables
+    -> ;
++-------------------------+
+| Tables_in_userAuthenticationhealth |
++-------------------------+
+| userAuthentication      |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> desc userAuthentication;
++-----------------------+---------------+------+-----+---------+----------------+
+| Field                 | Type          | Null | Key | Default | Extra          |
++-----------------------+---------------+------+-----+---------+----------------+
+| id                    | int           | NO   | PRI | NULL    | auto_increment |
+| userName              | varchar(20)   | YES  | UNI | NULL    |                |
+| password              | varchar(100)  | YES  |     | NULL    |                |
+| accountStatus         | tinyint(1)    | YES  |     | NULL    |                |
+| numberOfAttempts      | int           | YES  |     | NULL    |                |
+| firstName             | varchar(20)   | NO   |     | NULL    |                |
+| lastName              | varchar(20)   | NO   |     | NULL    |                |
+| mobileNumber          | decimal(10,0) | YES  |     | NULL    |                |
+| emailId               | varchar(30)   | NO   | UNI | NULL    |                |
+| lastLoggedIn          | timestamp     | YES  |     | NULL    |                |
+| gender                | varchar(20)   | NO   |     | NULL    |                |
+| birthDate             | date          | NO   |     | NULL    |                |
+| loginType             | int           | YES  |     | NULL    |                |
+| userId                | decimal(65,0) | YES  | UNI | NULL    |                |
+| imageUrl              | varchar(100)  | YES  |     | NULL    |                |
+| accessToken           | varchar(300)  | YES  | UNI | NULL    |                |
+| emergencyMobileNumber | decimal(10,0) | YES  |     | NULL    |                |
+| emergencyEmailId      | varchar(40)   | YES  |     | NULL    |                |
++-----------------------+---------------+------+-----+---------+----------------+
+18 rows in set (0.07 sec)
+
+create table userAuthentication(id int AUTO_INCREMENT primary key,userName varchar(20) NOT NULL UNIQUE,password varchar(20) NOT NULL,accountStatus boolean,numberOfAttempts int,firstName varchar(20) NOT NULL,lastName varchar(20) NOT NULL,mobileNumber decimal NOT NULL,emailId varchar(40) NOT NULL,lastLoggedIn TIMESTAMP,gender varchar(20) NOT NULL,birthDate DATE NOT NULL,CHECK(numberOfAttempts<=3));
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '@Aniket1';
+
+
+
+create table like :->
+
+mysql> desc userAuthentication;
++-----------------------+---------------+------+-----+-------------------+-----------------------------+
+| Field                 | Type          | Null | Key | Default           | Extra                       |
++-----------------------+---------------+------+-----+-------------------+-----------------------------+
+| id                    | int(11)       | NO   | PRI | NULL              | auto_increment              |
+| userName              | varchar(20)   | NO   | UNI | NULL              |                             |
+| password              | varchar(100)  | YES  |     | NULL              |                             |
+| accountStatus         | tinyint(1)    | YES  |     | NULL              |                             |
+| numberOfAttempts      | int(11)       | YES  |     | NULL              |                             |
+| firstName             | varchar(20)   | NO   |     | NULL              |                             |
+| lastName              | varchar(20)   | NO   |     | NULL              |                             |
+| mobileNumber          | decimal(10,0) | NO   |     | NULL              |                             |
+| emailId               | varchar(40)   | NO   |     | NULL              |                             |
+| lastLoggedIn          | timestamp     | NO   |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |
+| gender                | varchar(20)   | NO   |     | NULL              |                             |
+| birthDate             | date          | NO   |     | NULL              |                             |
+| emergencyMobileNumber | decimal(10,0) | YES  |     | NULL              |                             |
+| emergencyEmailId      | varchar(40)   | YES  |     | NULL              |                             |
++-----------------------+---------------+------+-----+-------------------+-----------------------------+
+
+
+
+
+
+
+              
+
+
+

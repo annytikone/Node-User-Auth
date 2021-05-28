@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '@Aniket1',
-  database: 'samsunghealth',
+  database: 'user-auth',
   port: '3306',
   insecureAuth: true
 });

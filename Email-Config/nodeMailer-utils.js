@@ -8,8 +8,8 @@ exports.sendEmailByNodemailer = (receipent, message, attachment) =>
         var smtpTransport = nodemailer.createTransport({
             service: "Gmail",
             auth: {
-                user: "anikettikone44@gmail.com",
-                pass: "9011869840"
+                user: "a345nik435et345345tiko534534ne4435454@gmail.com",
+                pass: "3333342342425"
             }
         });
 
